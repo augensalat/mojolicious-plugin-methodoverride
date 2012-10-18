@@ -1,8 +1,50 @@
 package Mojolicious::Plugin::MethodOverride;
 
-use 5.010;
-
 use Mojo::Base 'Mojolicious::Plugin';
+
+our $VERSION = '0.010';
+
+sub register {
+    my ($self, $app, $conf) = @_;
+    my $header =
+        exists $conf->{header} ? $conf->{header} : 'X-HTTP-Method-Override';
+    my $param = exists $conf->{param} ? $conf->{param} : undef;
+
+    $app->hook(
+        after_static_dispatch => sub {
+            my $self = shift;
+
+            # Ignore static files
+            return if $self->stash->{'mojo.static'};
+
+            my $req = $self->req;
+
+            return unless $req->method eq 'POST';
+
+            my $method = defined $header && $req->headers->header($header);
+
+            if ($method) {
+                $req->headers->remove($header);
+            }
+            elsif (defined $param) {
+                for ($req->url->query) {
+                    $method = $_->param($param)
+                        or return 1;
+                    $_->remove($param);
+                }
+            }
+
+            if ($method and $method =~ /^[A-Za-z]+$/) {
+                $app->log->debug(($header // $param) . ': ' . $method);
+                $req->method($method);
+            }
+        }
+    );
+}
+
+1;
+
+__END__
 
 =head1 NAME
 
@@ -10,11 +52,7 @@ Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs
 
 =head1 VERSION
 
-Version 0.001
-
-=cut
-
-our $VERSION = '0.001';
+Version 0.010
 
 =head1 SYNOPSIS
 
@@ -40,24 +78,8 @@ it replaces the C<HTTP POST> method with a method given by an C<HTTP>
 header. It is also possible to define a query parameter for the same
 purpose.
 
-A valid value for the HTTP verb in the header or query parameter is one
-of:
-
-=over
-
-=item GET
-
-=item POST
-
-=item PUT
-
-=item DELETE
-
-=item OPTIONS
-
-=back
-
-It must be specified in UPPER case.
+Any token built of US-ASCII letters is accepted as a valid value for the
+HTTP verb.
 
 =head1 CONFIGURATION
 
@@ -79,7 +101,7 @@ in the examples below:
   # Mojolicious::Lite
   plugin 'MethodOverride',
     header => 'X-HTTP-Method',
-    param  => 'http_method'; 
+    param  => 'http_method';
 
 HTTP header can be disabled by setting to C<undef>:
 
@@ -91,54 +113,6 @@ HTTP header can be disabled by setting to C<undef>:
       param  => 'x-tunneled-method',
     }
   );
-
-=cut
-
-sub register {
-    my ($self, $app, $conf) = @_;
-    my $header =
-        exists $conf->{header} ? $conf->{header} : 'X-HTTP-Method-Override';
-    my $param = exists $conf->{param} ? $conf->{param} : undef;
-
-    $app->hook(
-        after_static_dispatch => sub {
-            my $self = shift;
-
-            # Ignore static files
-            return 1 if $self->stash->{'mojo.static'};
-
-            my $req = $self->req;
-
-            return 1 unless $req->method eq 'POST';
-
-            my $method = defined $header && $req->headers->header($header);
-
-            if ($method) {
-                $req->headers->remove($header);
-            }
-            elsif (defined $param) {
-                for ($req->url->query) {
-                    $method = $_->param($param)
-                        or return 1;
-                    $_->remove($param);
-                }
-            }
-
-            $method ~~ [qw(GET POST PUT DELETE OPTIONS)]
-                or return 1;
-            
-            $self->app->log->debug(($header // $param) . ': ' . $method);
- 
-            $req->method($method);
-
-            return 1;
-        }
-    );
-}
-
-1;
-
-__END__
 
 =head1 AUTHOR
 
@@ -162,13 +136,9 @@ L<http://code.google.com/apis/gdata/docs/2.0/basics.html>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2011 Bernhard Graf.
+Copyright (C) 2012 Bernhard Graf.
 
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
+This library is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
 
 See http://dev.perl.org/licenses/ for more information.
-
-
-=cut
