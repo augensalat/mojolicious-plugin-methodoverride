@@ -3,6 +3,7 @@ inc
 Makefile
 Makefile.old
 MANIFEST*
+!MANIFEST.skip
 META.*
 README
 pm_to_blib*
