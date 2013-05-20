@@ -1,5 +1,8 @@
 Revision history for Mojolicious-Plugin-MethodOverride
 
+0.020   2013-05-20
+        - Fix for Mojolicious 4.0 breaking changes.
+
 0.010   2012-10-22
         - Accept any HTTP method name (if its made of ASCII letters).
         - Mojolicious 2 ist minimum requirement.

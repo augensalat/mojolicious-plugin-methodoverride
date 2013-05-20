@@ -4,8 +4,8 @@ use Mojo::Base -strict;
 
 # Disable IPv6 and libev
 BEGIN {
-  $ENV{MOJO_NO_IPV6} = 1;
-  $ENV{MOJO_REACTOR} = 'Mojo::Reactor::Poll';
+    $ENV{MOJO_NO_IPV6} = 1;
+    $ENV{MOJO_REACTOR} = 'Mojo::Reactor::Poll';
 }
 
 use Test::More;
@@ -15,21 +15,17 @@ use Test::Mojo;
 
 plugin 'MethodOverride';
 
-get '/welcome' => sub {
-  shift->render_data("GET the Mojolicious real-time web framework!\n");
+app->secret('mpmo.test');
+
+any [qw(GET POST PUT DELETE)] => '/welcome' => sub {
+    my $self = shift;
+    my $method = uc $self->req->method;
+
+    $self->render(
+        data => "$method the Mojolicious real-time web framework!\n"
+    );
 };
 
-post '/welcome' => sub {
-  shift->render_data("POST the Mojolicious real-time web framework!\n");
-};
-
-put '/welcome' => sub {
-  shift->render_data("PUT the Mojolicious real-time web framework!\n");
-};
-
-del '/welcome' => sub {
-  shift->render_data("DELETE the Mojolicious real-time web framework!\n");
-};
 
 my $t = Test::Mojo->new;
 

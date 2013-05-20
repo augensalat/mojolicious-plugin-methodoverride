@@ -2,20 +2,31 @@ package Mojolicious::Plugin::MethodOverride;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
-our $VERSION = '0.010';
+our $VERSION = '0.020';
 
 sub register {
     my ($self, $app, $conf) = @_;
     my $header =
         exists $conf->{header} ? $conf->{header} : 'X-HTTP-Method-Override';
     my $param = exists $conf->{param} ? $conf->{param} : undef;
+    my ($hook, $static_flag);
+
+    if ($Mojolicious::VERSION < 3.84) { # legacy mode
+        $hook = 'after_static_dispatch';
+        $static_flag = 'mojo.static';
+    }
+    else {
+        $hook = 'before_routes';
+        $static_flag = 'mojolicious.plugin.method_overrride.static';
+        $app->hook(after_static => sub { $self->stash->{$static_flag} = 1 });
+    }
 
     $app->hook(
-        after_static_dispatch => sub {
+        $hook => sub {
             my $self = shift;
 
             # Ignore static files
-            return if $self->stash->{'mojo.static'};
+            return if $self->stash->{$static_flag};
 
             my $req = $self->req;
 
@@ -52,7 +63,7 @@ Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs
 
 =head1 VERSION
 
-Version 0.010
+Version 0.020
 
 =head1 SYNOPSIS
 
