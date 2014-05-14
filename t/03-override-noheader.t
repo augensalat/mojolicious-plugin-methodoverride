@@ -15,7 +15,7 @@ use Test::Mojo;
 
 plugin 'MethodOverride', header => undef, param => 'x-tunneled-method';
 
-app->secret('mpmo.test');
+app->secrets(['mpmo.test']);
 
 any [qw(GET POST PUT DELETE)] => '/welcome' => sub {
     my $self = shift;

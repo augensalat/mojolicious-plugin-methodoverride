@@ -7,10 +7,10 @@ author          q{Bernhard Graf <graf@cpan.org>};
 license         'perl';
 repository      'git://github.com/augensalat/mojolicious-plugin-methodoverride.git';
 
-build_requires  'Test::More';
-build_requires  'Test::Mojo';
+test_requires   'Test::More';
+test_requires   'Test::Mojo';
 
-requires        'Mojolicious' => '3.21';
+requires        'Mojolicious' => '4.63';
 
 auto_install;
 

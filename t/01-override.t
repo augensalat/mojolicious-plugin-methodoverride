@@ -15,7 +15,7 @@ use Test::Mojo;
 
 plugin 'MethodOverride';
 
-app->secret('mpmo.test');
+app->secrets(['mpmo.test']);
 
 any [qw(GET POST PUT DELETE)] => '/welcome' => sub {
     my $self = shift;
