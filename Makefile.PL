@@ -10,7 +10,7 @@ repository      'git://github.com/augensalat/mojolicious-plugin-methodoverride.g
 build_requires  'Test::More';
 build_requires  'Test::Mojo';
 
-requires        'Mojolicious' => '3.21';
+requires        'Mojolicious' => '4.63';
 
 auto_install;
 

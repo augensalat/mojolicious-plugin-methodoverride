@@ -17,7 +17,7 @@ plugin 'MethodOverride',
     header => 'X-HTTP-Test-Override',
     param => 'x-test-tunnel-method';
 
-app->secret('mpmo.test');
+app->secrets(['mpmo.test']);
 
 any [qw(GET POST PUT DELETE)] => '/welcome' => sub {
     my $self = shift;
