@@ -17,7 +17,12 @@ plugin 'MethodOverride',
     header => 'X-HTTP-Test-Override',
     param => 'x-test-tunnel-method';
 
-app->secret('mpmo.test');
+if (app->can('secrets')) {
+    app->secrets(['mpmo.test']);
+}
+elsif (app->can('secret')) {
+    app->secret('mpmo.test');
+}
 
 any [qw(GET POST PUT DELETE)] => '/welcome' => sub {
     my $self = shift;

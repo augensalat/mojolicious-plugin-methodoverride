@@ -1,5 +1,8 @@
 Revision history for Mojolicious-Plugin-MethodOverride
 
+0.030   2014-05-15
+        - Test fix for Mojolicious 4.91 breaking changes (chorny)
+
 0.020   2013-05-20
         - Fix for Mojolicious 4.0 breaking changes.
         - Increase Mojolicious minimum version to 3.21.
