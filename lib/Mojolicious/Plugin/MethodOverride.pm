@@ -18,7 +18,7 @@ sub register {
     else {
         $hook = 'before_routes';
         $static_flag = 'mojolicious.plugin.method_overrride.static';
-        $app->hook(after_static => sub { $self->stash->{$static_flag} = 1 });
+        $app->hook(after_static => sub { shift->stash->{$static_flag} = 1 });
     }
 
     $app->hook(
