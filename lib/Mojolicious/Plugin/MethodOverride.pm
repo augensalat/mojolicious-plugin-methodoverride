@@ -18,7 +18,7 @@ sub register {
     else {
         $hook = 'before_routes';
         $static_flag = 'mojolicious.plugin.method_overrride.static';
-        $app->hook(after_static => sub { $self->stash->{$static_flag} = 1 });
+        $app->hook(after_static => sub { shift->stash->{$static_flag} = 1 });
     }
 
     $app->hook(
@@ -38,11 +38,8 @@ sub register {
                 $req->headers->remove($header);
             }
             elsif (defined $param) {
-                for ($req->url->query) {
-                    $method = $_->param($param)
-                        or return 1;
-                    $_->remove($param);
-                }
+                $method = $req->body_params->param($param) or return 1;
+                $req->body_params->remove($param);
             }
 
             if ($method and $method =~ /^[A-Za-z]+$/) {
