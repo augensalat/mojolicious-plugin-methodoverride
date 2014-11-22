@@ -2,33 +2,19 @@ package Mojolicious::Plugin::MethodOverride;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
-our $VERSION = '0.030';
+our $VERSION = '0.040';
 
 sub register {
     my ($self, $app, $conf) = @_;
     my $header =
         exists $conf->{header} ? $conf->{header} : 'X-HTTP-Method-Override';
     my $param = exists $conf->{param} ? $conf->{param} : undef;
-    my ($hook, $static_flag);
-
-    if ($Mojolicious::VERSION < 3.84) { # legacy mode
-        $hook = 'after_static_dispatch';
-        $static_flag = 'mojo.static';
-    }
-    else {
-        $hook = 'before_routes';
-        $static_flag = 'mojolicious.plugin.method_overrride.static';
-        $app->hook(after_static => sub { $self->stash->{$static_flag} = 1 });
-    }
+    my $hook = $Mojolicious::VERSION < 3.84 ?   # support ancient Mojolicious
+        'after_static_dispatch' : 'before_routes';
 
     $app->hook(
         $hook => sub {
-            my $self = shift;
-
-            # Ignore static files
-            return if $self->stash->{$static_flag};
-
-            my $req = $self->req;
+            my $req = $_[0]->req;
 
             return unless $req->method eq 'POST';
 
@@ -63,7 +49,7 @@ Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs
 
 =head1 VERSION
 
-Version 0.030
+Version 0.040
 
 =head1 SYNOPSIS
 
@@ -147,7 +133,7 @@ L<http://code.google.com/apis/gdata/docs/2.0/basics.html>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2012 Bernhard Graf.
+Copyright (C) 2012 - 2014 Bernhard Graf.
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

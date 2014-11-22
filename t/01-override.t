@@ -31,7 +31,6 @@ any [qw(GET POST PUT DELETE)] => '/welcome' => sub {
     );
 };
 
-
 my $t = Test::Mojo->new;
 
 $t->get_ok('/welcome')
@@ -81,4 +80,14 @@ $t->post_ok('/welcome?x-tunneled-method=DELETE')
   ->content_unlike(qr/DELETE the Mojolicious /)
   ->content_like(qr/POST the Mojolicious /);
 
+$t->get_ok('/static.txt')
+    ->status_is(200)
+    ->content_like(qr/^GET static/);
+$t->post_ok('/static.txt', {'X-HTTP-Method-Override' => 'PUT'})
+  ->status_is(404);
+
 done_testing;
+
+__DATA__
+@@ static.txt
+GET static
