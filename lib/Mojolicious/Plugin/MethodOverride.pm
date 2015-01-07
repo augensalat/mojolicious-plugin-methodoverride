@@ -2,7 +2,7 @@ package Mojolicious::Plugin::MethodOverride;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
-our $VERSION = '0.040';
+our $VERSION = '0.041';
 
 sub register {
     my ($self, $app, $conf) = @_;
@@ -49,7 +49,7 @@ Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs
 
 =head1 VERSION
 
-Version 0.040
+Version 0.041
 
 =head1 SYNOPSIS
 

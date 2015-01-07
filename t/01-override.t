@@ -83,8 +83,6 @@ $t->post_ok('/welcome?x-tunneled-method=DELETE')
 $t->get_ok('/static.txt')
     ->status_is(200)
     ->content_like(qr/^GET static/);
-$t->post_ok('/static.txt', {'X-HTTP-Method-Override' => 'PUT'})
-  ->status_is(404);
 
 done_testing;
 
