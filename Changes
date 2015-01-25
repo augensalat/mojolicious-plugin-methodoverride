@@ -1,5 +1,8 @@
 Revision history for Mojolicious-Plugin-MethodOverride
 
+0.042	2015-01-25
+        - Add README (suggested by Chris Kirke).
+
 0.041	2015-01-07
         - Remove test "method override for static files":
           POST static_file must not be possible, but this was fixed in

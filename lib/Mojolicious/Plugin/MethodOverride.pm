@@ -2,7 +2,7 @@ package Mojolicious::Plugin::MethodOverride;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
-our $VERSION = '0.041';
+our $VERSION = '0.042';
 
 sub register {
     my ($self, $app, $conf) = @_;
@@ -49,7 +49,7 @@ Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs
 
 =head1 VERSION
 
-Version 0.041
+Version 0.042
 
 =head1 SYNOPSIS
 
@@ -133,7 +133,7 @@ L<http://code.google.com/apis/gdata/docs/2.0/basics.html>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2012 - 2014 Bernhard Graf.
+Copyright (C) 2012 - 2015 Bernhard Graf.
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
