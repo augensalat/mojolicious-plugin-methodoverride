@@ -11,6 +11,8 @@ build_requires  'Test::Mojo';
 
 requires        'Mojolicious' => '3.21';
 
+perl_version    '5.10';
+
 auto_install;
 
 WriteAll;
