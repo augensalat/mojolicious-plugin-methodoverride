@@ -13,3 +13,4 @@ Mojolicious-Plugin-MethodOverride-*
 *~
 .*
 !.gitignore
+!.travis.yml
