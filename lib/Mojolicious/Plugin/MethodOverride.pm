@@ -1,5 +1,6 @@
 package Mojolicious::Plugin::MethodOverride;
 
+use 5.010;
 use Mojo::Base 'Mojolicious::Plugin';
 
 our $VERSION = '0.042';

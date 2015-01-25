@@ -2,28 +2,28 @@ Revision history for Mojolicious-Plugin-MethodOverride
 
 0.042	2015-01-25
         - Add README (suggested by Chris Kirke).
+	- Declare minimum Perl version.
 
 0.041	2015-01-07
-        - Remove test "method override for static files":
-          POST static_file must not be possible, but this was fixed in
-          Mojolicious 5.30. OTOH method overriding does no harm if the
-          HTTP method is completely ignored for static files before 5.30.
+	- Remove test "method override for static files":
+	  POST static_file must not be possible, but this was fixed in
+	  Mojolicious 5.30. OTOH method overriding does no harm if the
+	  HTTP method is completely ignored for static files before 5.30.
 
 0.040   2014-11-23
 	- No extra check for static files.
 
 0.030   2014-05-15
-        - Test fix for Mojolicious 4.91 breaking changes (chorny)
+	- Test fix for Mojolicious 4.91 breaking changes (chorny)
 
 0.020   2013-05-20
-        - Fix for Mojolicious 4.0 breaking changes.
-        - Increase Mojolicious minimum version to 3.21.
+	- Fix for Mojolicious 4.0 breaking changes.
+	- Increase Mojolicious minimum version to 3.21.
 
 0.010   2012-10-22
-        - Accept any HTTP method name (if its made of ASCII letters).
-        - Mojolicious 2 ist minimum requirement.
-        - Updated test for recent Mojolicous.
+	- Accept any HTTP method name (if its made of ASCII letters).
+	- Mojolicious 2 ist minimum requirement.
+	- Updated test for recent Mojolicous.
 
 0.001   2011-10-31
-        First version, released on an unsuspecting world.
-
+	First version, released on an unsuspecting world.
