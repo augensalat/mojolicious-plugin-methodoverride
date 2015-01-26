@@ -33,6 +33,7 @@ sub register {
             }
 
             if ($method and $method =~ /^[A-Za-z]+$/) {
+                # uncoverable condition false
                 $app->log->debug(($header // $param) . ': ' . $method);
                 $req->method($method);
             }
