@@ -1,7 +1,8 @@
 Revision history for Mojolicious-Plugin-MethodOverride
 
-0.050   2015-04-18
+0.050   2015-04-19
 	- Override method as soon as the request header is read.
+	- Mention _method parameter since Mojolicious 6.03.
 
 0.042	2015-01-25
 	- Add README (suggested by Chris Kirke).

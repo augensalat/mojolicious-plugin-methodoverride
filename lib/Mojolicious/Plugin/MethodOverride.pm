@@ -85,6 +85,10 @@ purpose.
 Any token built of US-ASCII letters is accepted as a valid value for the
 HTTP verb.
 
+Starting with v6.03 L<Mojolicious> has a builtin parameter C<_method> to
+override the HTTP method. Unfortunately there is neither a way to specify
+another name, nor to use an HTTP header, nor to disable that feature.
+
 =head1 CONFIGURATION
 
 The default HTTP header to override the C<HTTP POST> method is
