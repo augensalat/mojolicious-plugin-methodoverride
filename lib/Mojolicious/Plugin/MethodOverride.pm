@@ -3,39 +3,45 @@ package Mojolicious::Plugin::MethodOverride;
 use 5.010;
 use Mojo::Base 'Mojolicious::Plugin';
 
-our $VERSION = '0.042';
+use Scalar::Util qw(weaken);
+
+our $VERSION = '0.050';
 
 sub register {
     my ($self, $app, $conf) = @_;
+
     my $header =
         exists $conf->{header} ? $conf->{header} : 'X-HTTP-Method-Override';
     my $param = exists $conf->{param} ? $conf->{param} : undef;
-    my $hook = $Mojolicious::VERSION < 3.84 ?   # support ancient Mojolicious
-        'after_static_dispatch' : 'before_routes';
 
     $app->hook(
-        $hook => sub {
-            my $req = $_[0]->req;
+        after_build_tx => sub {
+            my $tx = shift;
 
-            return unless $req->method eq 'POST';
+            weaken $tx;
 
-            my $method = defined $header && $req->headers->header($header);
+            $tx->req->content->on(body => sub {
+                my $req = $tx->req;
 
-            if ($method) {
-                $req->headers->remove($header);
-            }
-            elsif (defined $param) {
-                for ($req->url->query) {
-                    $method = $_->param($param)
-                        or return 1;
-                    $_->remove($param);
+                return unless $req->method eq 'POST';
+
+                my $method = defined $header && $req->headers->header($header);
+
+                if ($method) {
+                    $req->headers->remove($header);
                 }
-            }
+                elsif (defined $param) {
+                    my $q = $req->url->query;
 
-            if ($method and $method =~ /^[A-Za-z]+$/) {
-                $app->log->debug(($header // $param) . ': ' . $method);
-                $req->method($method);
-            }
+                    $method = $q->param($param)
+                        and $q->remove($param);
+                }
+
+                if ($method and $method =~ /^[A-Za-z]+$/) {
+                    $app->log->debug(($header // $param) . ': ' . $method);
+                    $req->method($method);
+                }
+            });
         }
     );
 }

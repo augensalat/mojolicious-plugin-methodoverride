@@ -4,10 +4,6 @@
 
 Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs 
 
-# VERSION
-
-Version 0.042
-
 # SYNOPSIS
 
 ```perl

@@ -1,7 +1,10 @@
 Revision history for Mojolicious-Plugin-MethodOverride
 
+0.050   2015-04-18
+	- Override method as soon as the request header is read.
+
 0.042	2015-01-25
-        - Add README (suggested by Chris Kirke).
+	- Add README (suggested by Chris Kirke).
 	- Declare minimum Perl version.
 	- Enable Travis CI (suggested by Chris Kirke).
 	- Markdownify README.
