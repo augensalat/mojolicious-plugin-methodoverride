@@ -5,7 +5,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 
 use Scalar::Util qw(weaken);
 
-our $VERSION = '0.051';
+our $VERSION = '0.052';
 
 sub register {
     my ($self, $app, $conf) = @_;
@@ -31,10 +31,7 @@ sub register {
                     $req->headers->remove($header);
                 }
                 elsif (defined $param) {
-                    my $q = $req->url->query;
-
-                    $method = $q->param($param)
-                        and $q->remove($param);
+                    $method = $req->url->query->clone->param($param);
                 }
 
                 if ($method and $method =~ /^[A-Za-z]+$/) {
@@ -44,6 +41,12 @@ sub register {
             });
         }
     );
+
+    if (defined $param) {
+        $app->hook(before_dispatch => sub {
+            shift->req->url->query->remove($param);
+        });
+    }
 }
 
 1;
@@ -56,7 +59,7 @@ Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs
 
 =head1 VERSION
 
-Version 0.051
+Version 0.052
 
 =head1 SYNOPSIS
 
@@ -121,6 +124,16 @@ HTTP header can be disabled by setting to C<undef>:
       param  => 'x-tunneled-method',
     }
   );
+
+=head2 Combination with Mojolicious::Plugin::Charset
+
+Both, L<Mojolicious::Plugin::Charset> and this plugin install a
+L<before_dispatch hook|Mojolicious/before_dispatch>. In order to work
+correctly L<Mojolicious::Plugin::Charset> must be loaded before
+C<Mojolicious::Plugin::MethodOverride>:
+
+  plugin 'Charset', charset => 'Shift_JIS';
+  plugin 'MethodOverride';
 
 =head1 AUTHOR
 

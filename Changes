@@ -1,5 +1,9 @@
 Revision history for Mojolicious-Plugin-MethodOverride
 
+0.052   2015-04-28
+	- Bug fix: Clone URL query before touching it.
+	- Add documentation about M:P::Charset with M:P::MethodOverride.
+
 0.051   2015-04-19
 	- Fix Version in POD.
 
