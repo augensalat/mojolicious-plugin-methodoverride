@@ -1,6 +1,9 @@
 #!/usr/bin/env perl
 
+use utf8;   # needed for Mojolicious < 3.69
+
 use Mojo::Base -strict;
+use Mojo::URL;
 
 # Disable IPv6 and libev
 BEGIN {
@@ -34,7 +37,7 @@ any \@methods => '/' => sub {
 
 my $t = Test::Mojo->new;
 
-my $url = $t->ua->server->url->path('/')->query(p => $yatta);
+my $url = Mojo::URL->new->path('/')->query(p => $yatta);
 $url->query->charset($enc);
 
 $t->post_ok($url)
@@ -42,7 +45,7 @@ $t->post_ok($url)
   ->content_is("POST p=$yatta, m=*undef*");
 
 for my $method (@methods) {
-    $url = $t->ua->server->url->path('/')
+    $url = Mojo::URL->new->path('/')
         ->query(p => $yatta, $pname => $method);
     $url->query->charset($enc);
 

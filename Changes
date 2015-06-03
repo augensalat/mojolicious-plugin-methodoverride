@@ -1,5 +1,8 @@
 Revision history for Mojolicious-Plugin-MethodOverride
 
+0.053   2015-06-03
+	- Bug fix: t/04-override-charset.t failed w/ M<4.50.
+
 0.052   2015-04-28
 	- Bug fix: Clone URL query before touching it.
 	- Add documentation about M:P::Charset with M:P::MethodOverride.
