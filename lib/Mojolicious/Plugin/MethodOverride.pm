@@ -5,7 +5,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 
 use Scalar::Util qw(weaken);
 
-our $VERSION = '0.053';
+our $VERSION = '0.060';
 
 sub register {
     my ($self, $app, $conf) = @_;
@@ -59,7 +59,7 @@ Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs
 
 =head1 VERSION
 
-Version 0.053
+Version 0.060
 
 =head1 SYNOPSIS
 
@@ -125,15 +125,31 @@ HTTP header can be disabled by setting to C<undef>:
     }
   );
 
-=head2 Combination with Mojolicious::Plugin::Charset
+=head2 Combination with Charset and Encoding Manipulation
 
-Both, L<Mojolicious::Plugin::Charset> and this plugin install a
-L<before_dispatch hook|Mojolicious/before_dispatch>. In order to work
-correctly L<Mojolicious::Plugin::Charset> must be loaded before
-C<Mojolicious::Plugin::MethodOverride>:
+Special attention is required when the application modifies the decoding
+behaviour of the request object. Before Mojolicious 7.0 a Charset plugin
+existed, that had to be loaded before this plugin:
 
   plugin 'Charset', charset => 'Shift_JIS';
   plugin 'MethodOverride';
+
+This Charset plugin was removed in 7.0 and at the time of this writing
+the programmer is required to do it this way:
+
+  app->types->type(html => 'text/html;charset=Shift_JIS');
+  app->renderer->encoding('Shift_JIS');
+  app->hook(
+    before_dispatch => sub {
+      shift->req->default_charset('Shift_JIS')->url->query->charset('Shift_JIS');
+    }
+  );
+  plugin 'MethodOverride';
+
+The reason for the order is that the MethodOverride plugin installs a
+L<before_dispatch hook|Mojolicious/before_dispatch> that instantiates the
+L<< $c->req->url->query | Mojo::Parameters >> object which is kind of
+self-modifying with implicitely decoding of the query parameters. 
 
 =head1 AUTHOR
 
@@ -157,7 +173,7 @@ L<http://code.google.com/apis/gdata/docs/2.0/basics.html>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2012 - 2015 Bernhard Graf.
+Copyright (C) 2012 - 2016 Bernhard Graf.
 
 This library is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

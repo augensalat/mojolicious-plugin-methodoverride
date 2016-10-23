@@ -21,7 +21,18 @@ my $yatta = 'やった';
 my @methods = qw(GET POST PUT PATCH DELETE);
 my $pname = 'x-test-tunnel-method';
 
-plugin 'Charset', charset => $enc;
+eval {
+    plugin 'Charset', charset => $enc; 1;
+}
+or do {
+    app->types->type(html => "text/html;charset=$enc");
+    app->renderer->encoding('Shift_JIS');
+    app->hook(
+        before_dispatch => sub {
+            shift->req->default_charset('Shift_JIS')->url->query->charset('Shift_JIS');
+        }
+    );
+};
 
 plugin 'MethodOverride', header => undef, param => $pname;
 

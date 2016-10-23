@@ -1,5 +1,8 @@
 Revision history for Mojolicious-Plugin-MethodOverride
 
+0.060   2016-10-23
+	- Fix for Mojolicious 7.0 breaking changes.
+
 0.053   2015-06-03
 	- Bug fix: t/04-override-charset.t failed w/ M<4.50.
 	- Reduce requirement to Mojolicious 2.48.
