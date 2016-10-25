@@ -15,77 +15,51 @@ use Test::Mojo;
 
 plugin 'MethodOverride';
 
-if (app->can('secrets')) {
-    app->secrets(['mpmo.test']);
-}
-elsif (app->can('secret')) {
-    app->secret('mpmo.test');
-}
+app->secrets(['mpmo.test']);
 
-any [qw(GET POST PUT DELETE)] => '/welcome' => sub {
-    my $self = shift;
-    my $method = uc $self->req->method;
+{
+    no strict 'refs';
 
-    $self->render(
-        data => "$method the Mojolicious real-time web framework!\n"
-    );
-};
+    for my $method (qw(get post put del)) {
+        $method->('/welcome' => sub {
+            shift->render(
+                data => "$method the Mojolicious real-time web framework!\n"
+            );
+        });
+    }
+}
 
 my $t = Test::Mojo->new;
 
 $t->get_ok('/welcome')
   ->status_is(200)
-  ->content_like(qr/GET the Mojolicious /);
+  ->content_like(qr/get the Mojolicious /);
 $t->post_ok('/welcome')
   ->status_is(200)
-  ->content_like(qr/POST the Mojolicious /);
+  ->content_like(qr/post the Mojolicious /);
 $t->put_ok('/welcome')
   ->status_is(200)
-  ->content_like(qr/PUT the Mojolicious /);
+  ->content_like(qr/put the Mojolicious /);
 $t->delete_ok('/welcome')
   ->status_is(200)
-  ->content_like(qr/DELETE the Mojolicious /);
+  ->content_like(qr/del the Mojolicious /);
 
 $t->post_ok('/welcome', {'X-HTTP-Method-Override' => 'GET'})
   ->status_is(200)
-  ->content_like(qr/GET the Mojolicious /);
+  ->content_like(qr/get the Mojolicious /);
 $t->post_ok('/welcome', {'X-HTTP-Method-Override' => 'POST'})
   ->status_is(200)
-  ->content_like(qr/POST the Mojolicious /);
+  ->content_like(qr/post the Mojolicious /);
 $t->post_ok('/welcome', {'X-HTTP-Method-Override' => 'PUT'})
   ->status_is(200)
-  ->content_like(qr/PUT the Mojolicious /);
+  ->content_like(qr/put the Mojolicious /);
 $t->post_ok('/welcome', {'X-HTTP-Method-Override' => 'DELETE'})
   ->status_is(200)
-  ->content_like(qr/DELETE the Mojolicious /);
+  ->content_like(qr/del the Mojolicious /);
 
 $t->post_ok('/welcome', {'X-HTTP-Bogus-Override' => 'PUT'})
   ->status_is(200)
-  ->content_unlike(qr/PUT the Mojolicious /)
-  ->content_like(qr/POST the Mojolicious /);
-
-$t->post_ok('/welcome?x-tunneled-method=GET')
-  ->status_is(200)
-  ->content_unlike(qr/GET the Mojolicious /)
-  ->content_like(qr/POST the Mojolicious /);
-$t->post_ok('/welcome?x-tunneled-method=POST')
-  ->status_is(200)
-  ->content_like(qr/POST the Mojolicious /);
-$t->post_ok('/welcome?x-tunneled-method=PUT')
-  ->status_is(200)
-  ->content_unlike(qr/PUT the Mojolicious /)
-  ->content_like(qr/POST the Mojolicious /);
-$t->post_ok('/welcome?x-tunneled-method=DELETE')
-  ->status_is(200)
-  ->content_unlike(qr/DELETE the Mojolicious /)
-  ->content_like(qr/POST the Mojolicious /);
-
-$t->get_ok('/static.txt')
-    ->status_is(200)
-    ->content_like(qr/^GET static/);
+  ->content_unlike(qr/put the Mojolicious /)
+  ->content_like(qr/post the Mojolicious /);
 
 done_testing;
-
-__DATA__
-@@ static.txt
-GET static
