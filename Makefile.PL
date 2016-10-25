@@ -1,17 +1,26 @@
-use inc::Module::Install;
+use 5.010001;
 
-name            'Mojolicious-Plugin-MethodOverride';
-all_from        'lib/Mojolicious/Plugin/MethodOverride.pm';
-author          q{Bernhard Graf <graf@cpan.org>};
-license         'perl';
-repository      'git://github.com/augensalat/mojolicious-plugin-methodoverride.git';
+use strict;
+use warnings;
 
-build_requires  'Test::More';
-build_requires  'Test::Mojo';
+use ExtUtils::MakeMaker;
 
-requires        'Mojolicious' => '6.03';
-
-auto_install;
-
-WriteAll;
-
+WriteMakefile(
+    NAME         => 'Mojolicious::Plugin::MethodOverride',
+    VERSION_FROM => 'lib/Mojolicious/Plugin/MethodOverride.pm',
+    ABSTRACT     => 'Simulate HTTP Verbs',
+    AUTHOR       => 'Bernhard Graf',
+    LICENSE      => 'perl_5',
+    META_MERGE   => {
+        requires  => {perl => '5.010001'},
+        resources => {
+            license    => 'http://dev.perl.org/licenses/',
+            bugtracker => 'https://github.com/augensalat/mojolicious-plugin-methodoverride/issues',
+            repository => 'https://github.com/augensalat/mojolicious-plugin-methodoverride.git',
+        },
+    },
+    PREREQ_PM    => {
+        'Mojolicious' => '6.03',
+    },
+    test         => {TESTS => 't/*.t'},
+);
