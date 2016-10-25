@@ -5,7 +5,7 @@ use Mojo::Base 'Mojolicious::Plugin';
 
 use Scalar::Util qw(weaken);
 
-our $VERSION = '0.060';
+our $VERSION = '0.070';
 
 sub register {
     my ($self, $app, $conf) = @_;
@@ -59,7 +59,7 @@ Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs
 
 =head1 VERSION
 
-Version 0.060
+Version 0.070
 
 =head1 SYNOPSIS
 
