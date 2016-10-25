@@ -13,5 +13,9 @@ requires        'Mojolicious' => '2.48';
 
 auto_install;
 
+makemaker_args(
+    dist => { TAR => 'gtar' },
+);
+
 WriteAll;
 
