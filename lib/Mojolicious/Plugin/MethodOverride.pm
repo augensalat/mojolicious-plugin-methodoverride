@@ -5,14 +5,12 @@ use Mojo::Base 'Mojolicious::Plugin';
 
 use Scalar::Util qw(weaken);
 
-our $VERSION = '0.060';
+our $VERSION = '0.070';
 
 sub register {
     my ($self, $app, $conf) = @_;
-
     my $header =
         exists $conf->{header} ? $conf->{header} : 'X-HTTP-Method-Override';
-    my $param = exists $conf->{param} ? $conf->{param} : undef;
 
     $app->hook(
         after_build_tx => sub {
@@ -30,23 +28,14 @@ sub register {
                 if ($method) {
                     $req->headers->remove($header);
                 }
-                elsif (defined $param) {
-                    $method = $req->url->query->clone->param($param);
-                }
 
                 if ($method and $method =~ /^[A-Za-z]+$/) {
-                    $app->log->debug(($header // $param) . ': ' . $method);
+                    $app->log->debug($header . ': ' . $method);
                     $req->method($method);
                 }
             });
         }
     );
-
-    if (defined $param) {
-        $app->hook(before_dispatch => sub {
-            shift->req->url->query->remove($param);
-        });
-    }
 }
 
 1;
@@ -59,7 +48,7 @@ Mojolicious::Plugin::MethodOverride - Simulate HTTP Verbs
 
 =head1 VERSION
 
-Version 0.060
+Version 0.070
 
 =head1 SYNOPSIS
 
@@ -69,7 +58,9 @@ Version 0.060
   sub startup {
     my $self = shift;
 
-    $self->plugin('MethodOverride');
+    $self->plugin(
+      MethodOverride => {header => 'X-Tunneled-Method'}
+    );
 
     ...
   }
@@ -82,74 +73,33 @@ This plugin can simulate any HTTP verb (a.k.a. HTTP method) in
 environments where HTTP verbs other than GET and POST are not available.
 It uses the same approach as in many other restful web frameworks, where
 it replaces the C<HTTP POST> method with a method given by an C<HTTP>
-header. It is also possible to define a query parameter for the same
-purpose.
+header.
 
 Any token built of US-ASCII letters is accepted as a valid value for the
 HTTP verb.
 
 Starting with v6.03 L<Mojolicious> has a builtin parameter C<_method> to
 override the HTTP method. Unfortunately there is neither a way to specify
-another name, nor to use an HTTP header, nor to disable that feature.
+another name, nor to disable that feature.
 
 =head1 CONFIGURATION
 
 The default HTTP header to override the C<HTTP POST> method is
-C<"X-HTTP-Method-Override">. Overriding through a query parameter is off
-by default.
+C<"X-HTTP-Method-Override">.
 
 These settings can be changed in the plugin method call as demonstrated
 in the examples below:
 
   # Mojolicious
-  $self->plugin(
-    MethodOverride => {
-      header => 'X-Tunneled-Method',
-      param  => 'x-tunneled-method',
-    }
-  );
+  $self->plugin(MethodOverride => {header => 'X-Tunneled-Method'});
 
   # Mojolicious::Lite
-  plugin 'MethodOverride',
-    header => 'X-HTTP-Method',
-    param  => 'http_method';
+  plugin 'MethodOverride', {header => 'X-HTTP-Method'};
 
-HTTP header can be disabled by setting to C<undef>:
+=head2 Mojolicious < 6.03
 
-  # A Mojolicious app, that enables method overriding
-  # by query parameter only:
-  $self->plugin(
-    MethodOverride => {
-      header => undef,
-      param  => 'x-tunneled-method',
-    }
-  );
-
-=head2 Combination with Charset and Encoding Manipulation
-
-Special attention is required when the application modifies the decoding
-behaviour of the request object. Before Mojolicious 7.0 a Charset plugin
-existed, that had to be loaded before this plugin:
-
-  plugin 'Charset', charset => 'Shift_JIS';
-  plugin 'MethodOverride';
-
-This Charset plugin was removed in 7.0 and at the time of this writing
-the programmer is required to do it this way:
-
-  app->types->type(html => 'text/html;charset=Shift_JIS');
-  app->renderer->encoding('Shift_JIS');
-  app->hook(
-    before_dispatch => sub {
-      shift->req->default_charset('Shift_JIS')->url->query->charset('Shift_JIS');
-    }
-  );
-  plugin 'MethodOverride';
-
-The reason for the order is that the MethodOverride plugin installs a
-L<before_dispatch hook|Mojolicious/before_dispatch> that instantiates the
-L<< $c->req->url->query | Mojo::Parameters >> object which is kind of
-self-modifying with implicitely decoding of the query parameters. 
+Mojolicious Versions before 6.03 (down to Mojolicious 2.48) are supported by
+C<Mojolicious::Plugin::MethodOverride> version 0.060.
 
 =head1 AUTHOR
 
@@ -157,12 +107,8 @@ Bernhard Graf C<< <graf at cpan.org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to
-C<bug-mojolicious-plugin-methodoverride at rt.cpan.org>, or through the
-web interface at
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Mojolicious-Plugin-MethodOverride>.
-I will be notified, and then you'll automatically be notified of progress
-on your bug as I make changes.
+Please report any bugs or feature requests at
+L<https://github.com/augensalat/mojolicious-plugin-methodoverride/issues>.
 
 =head1 SEE ALSO
 
