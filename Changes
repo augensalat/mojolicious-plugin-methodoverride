@@ -4,6 +4,8 @@ Revision history for Mojolicious-Plugin-MethodOverride
 	- Remove the param option, because Mojolicious has the _method
 	  parameter since 6.03, and to avoid issues with parameter
 	  decoding.
+	- Switch Makfile.PL to ExtUtils::MakeMaker
+	- Use the Github issue tracker
 
 0.060   2016-10-23
 	- Fix for Mojolicious 7.0 breaking changes.
